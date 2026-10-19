@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/banner.svg" width="100%" alt="Reference Tools · Immersive Media: MPEG V-DMC Web Decoder and Player">
+  <img src=".github/banner.svg" width="100%" alt="Reference Tools · Dynamic Mesh Coding with MPEG V-DMC: V-DMC Web Decoder/Player">
 </p>
 
 <p align="center">
@@ -7,16 +7,15 @@
 </p>
 
 <p align="center">
-  <img alt="Status: experimental"
-    src="https://img.shields.io/badge/Status-Experimental-c0392b">
+  <img alt="Status" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fwww.5g-mag.com%2Fbadges%2Fstatus%2Frt-vdmc-web-decoder-player.json">
   <a href="https://github.com/5G-MAG/rt-vdmc-web-decoder-player/releases"><img alt="Version"
-    src="https://img.shields.io/github/v/release/5G-MAG/rt-vdmc-web-decoder-player?label=Version&sort=semver"></a>
+    src="https://img.shields.io/github/v/release/5G-MAG/rt-vdmc-web-decoder-player?label=Version"></a>
   <a href="LICENSE"><img alt="License: 5G-MAG Public License v1.0"
     src="https://img.shields.io/badge/License-5G--MAG%20PL%20v1.0-blue"></a>
 </p>
 
 <p align="center">
-  <a href="https://www.5g-mag.com/reference-tools/vdmc">Project page</a> &nbsp;&middot;&nbsp;
+  <a href="https://www.5g-mag.com/reference-tools/vdmc/">Project page</a> &nbsp;&middot;&nbsp;
   <a href="https://github.com/5G-MAG/rt-vdmc-web-decoder-player/issues">Issues</a> &nbsp;&middot;&nbsp;
   <a href="https://www.5g-mag.com/contributing">Contributing</a>
 </p>
@@ -28,7 +27,7 @@
 |  |  |
 |---|---|
 | **Implements** | {{ISO/IEC 23090-29, Video-based dynamic mesh coding (V-DMC). Confirm the edition and year before the first code lands}} |
-| **Part of** | Immersive Media |
+| **Part of** | [Dynamic Mesh Coding with MPEG V-DMC](https://www.5g-mag.com/reference-tools/vdmc/) |
 
 ## Introduction
 
