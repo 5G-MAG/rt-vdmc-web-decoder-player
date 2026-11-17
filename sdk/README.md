@@ -311,7 +311,7 @@ decoder from the MPEG reference software.
 ## Licence
 
 Copyright 2026 Nokia, licensed under the 5G-MAG Public License (v1.0) — full text in
-[`../LICENSE`](../LICENSE), notices in [`../NOTICE`](../NOTICE).
+[`../LICENSE`](../LICENSE), notices in [`../ATTRIBUTION_NOTICE`](../ATTRIBUTION_NOTICE).
 `wasm/decode.wasm` and `wasm/vdmc_decode.js` are compiled from the BSD-3-Clause MPEG V-DMC
 reference software, and `dist/vdmc_decoder.standalone.js` additionally embeds Three.js (MIT);
 see [`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md#4-licensing-aspects).

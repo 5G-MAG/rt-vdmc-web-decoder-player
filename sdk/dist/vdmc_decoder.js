@@ -1,14 +1,16 @@
 /**
  * V-DMC Web Decoder SDK
  * Copyright 2026 Nokia. Licensed under the 5G-MAG Public License (v1.0);
- * see LICENSE and NOTICE in the distribution, or
+ * see LICENSE and ATTRIBUTION_NOTICE in the distribution, or
  * https://www.5g-mag.com/reference-tools. Distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *
- * Third-party components (full notices in NOTICE):
+ * Third-party components (full notices in ATTRIBUTION_NOTICE):
  *  - MPEG V-DMC reference decoder, compiled to WebAssembly.
  *    Copyright (c) 2022, ISO/IEC. BSD 3-Clause. No patent rights are granted.
  *    Loaded from the sibling wasm/ directory.
+ *    Also compiled in: nanoflann (BSD-2-Clause), program-options-lite and libmd5 (BSD-3-Clause),
+ *    the Emscripten runtime and musl libc (MIT), LLVM libc++ (Apache-2.0 with LLVM Exceptions).
  */
 
 // src/VDMCMeshStream.js

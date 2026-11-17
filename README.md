@@ -57,7 +57,7 @@ Decoding is split across three layers:
 | [`docs/`](docs/) | Architecture, build, V-DMC feature set and displacement-calibration documentation. |
 | [`tm-reference/`](tm-reference/) | Ships only `wasm_decoder.patch` — the decoder-only changes applied to the reference software. The verification tests additionally expect the natively built `bin/` and the reference `cfg/` to be placed here locally (git-ignored). |
 | `serve.py` | Dev server that sets the required cross-origin-isolation headers. |
-| `NOTICE` | Project copyright notice + third-party notices (BSD-3-Clause WASM decoder, MIT Three.js, patent notice). |
+| `ATTRIBUTION_NOTICE` | Project copyright notice, attribution for third-party components and test content with their licence texts, and the patent notice. |
 
 ## Specification
 
@@ -210,7 +210,7 @@ the Contributor License Agreement required before code can be merged, are descri
 
 Distributed under the 5G-MAG Public License v1.0. See [LICENSE](LICENSE).
 
-Copyright 2026 Nokia. The project copyright notice and all third-party notices are in [NOTICE](NOTICE).
+Copyright 2026 Nokia. The project copyright notice and all third-party notices are in [ATTRIBUTION_NOTICE](ATTRIBUTION_NOTICE).
 `tm-reference/wasm_decoder.patch` is a derivative diff against the MPEG V-DMC reference
 software, which ISO/IEC distributes under the BSD 3-Clause licence and which is obtained
 separately from the MPEG git server; the prebuilt `sdk/wasm/decode.wasm` and its glue are
