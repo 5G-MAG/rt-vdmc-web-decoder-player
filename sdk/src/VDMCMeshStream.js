@@ -80,6 +80,10 @@ export class VDMCMeshStream {
     this._videoStreamsExpected = 0;
     this._videoStreamsDone = 0;
 
+    // feed() can be called before any load*() call, so these must exist from the start.
+    this._streamChunks = [];
+    this._streamEnded = false;
+
     this._initDecoder();
   }
 

@@ -22,6 +22,9 @@ var VDMCDecoder = class {
     this.onVideoStream = null;
     this.onComplete = null;
     this.dispParams = /* @__PURE__ */ new Map();
+    this._readyPromise = new Promise((resolve) => {
+      this._resolveReady = resolve;
+    });
     this.worker = new Worker(new URL("../wasm/vdmc_worker.js", import.meta.url), { type: "module" });
     this.worker.onerror = (e) => {
       console.error("VDMCDecoder worker error:", e.message, `@ ${e.filename}:${e.lineno}`);
@@ -33,6 +36,7 @@ var VDMCDecoder = class {
       const msg = e.data;
       switch (msg.type) {
         case "ready":
+          this._resolveReady();
           this.onReady?.();
           break;
         case "dispParams":
@@ -60,7 +64,8 @@ var VDMCDecoder = class {
       }
     };
   }
-  decode(data) {
+  async decode(data) {
+    await this._readyPromise;
     const arr = data instanceof Uint8Array ? data : new Uint8Array(data);
     this.dispParams.clear();
     const payload = new Uint8Array(arr);
@@ -1524,6 +1529,8 @@ var VDMCMeshStream = class {
     this._completeFired = false;
     this._videoStreamsExpected = 0;
     this._videoStreamsDone = 0;
+    this._streamChunks = [];
+    this._streamEnded = false;
     this._initDecoder();
   }
   // ------------------------------------------------------------------- Public API

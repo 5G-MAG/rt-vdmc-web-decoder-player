@@ -16,6 +16,9 @@ export class VDMCDecoder {
     // Storage for displacement parameters, keyed by frameId
     this.dispParams = new Map();  // frameId -> { edgeTable, baseEdgesCount, ..., iscale }
 
+    // The worker drops messages until its WASM has loaded; decode() waits for 'ready'.
+    this._readyPromise = new Promise((resolve) => { this._resolveReady = resolve; });
+
     // Spawn dedicated WASM decoder worker
     // Resolves the same from src/ and from dist/, which are both one level under sdk/.
     this.worker = new Worker(new URL('../wasm/vdmc_worker.js', import.meta.url), { type: 'module' });
@@ -32,6 +35,7 @@ export class VDMCDecoder {
       const msg = e.data;
       switch (msg.type) {
         case 'ready':
+          this._resolveReady();
           this.onReady?.();
           break;
         case 'dispParams':
@@ -61,7 +65,8 @@ export class VDMCDecoder {
     };
   }
 
-  decode(data) {
+  async decode(data) {
+    await this._readyPromise;
     const arr = data instanceof Uint8Array ? data : new Uint8Array(data);
     // Clear stale displacement params from any previous decode so frameId reuse
     // (a new file starts again at 0) can't read another load's parameters.
