@@ -61,6 +61,8 @@ export class VDMCMeshStream {
     this.onMode = null;      // (mode: 'full'|'basemesh') => void
     this.onFrame = null;     // (frame: VDMCFrame) => void
     this.onComplete = null;  // ({ frameCount }) => void
+    this.onError = null;     // (error: Error) => void
+    this.onReset = null;     // () => void, a new load is starting: players should drop the old frames
 
     // 3-queue state keyed by frameId.
     this._geometryQueue = new Map(); // frameId -> THREE.BufferGeometry
@@ -248,6 +250,7 @@ export class VDMCMeshStream {
     this._completeFired = false;
     this._videoStreamsExpected = 0;
     this._videoStreamsDone = 0;
+    this.onReset?.();
   }
 
   // --- Materials ---
@@ -424,9 +427,14 @@ export class VDMCMeshStream {
       WebVideoDecoder.warmupCalibration(this.renderer).then(runDecode, runDecode);
     };
 
-    decoder.onComplete = (frames) => {
+    decoder.onComplete = (frames, error) => {
       this._baseComplete = true;
       this.onLog(`Base-mesh decode complete: ${frames} frames`);
+      if (error || frames === 0) {
+        const err = new Error(error || 'no frames could be decoded from this bitstream');
+        this.onLog(`Decode failed: ${err.message}`);
+        this.onError?.(err);
+      }
       this._maybeComplete();
     };
   }

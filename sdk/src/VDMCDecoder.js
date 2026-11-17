@@ -54,7 +54,7 @@ export class VDMCDecoder {
           this.onVideoStream?.(msg.streamType, msg.bitstream, msg.frameCount, msg.firstFrameId);
           break;
         case 'complete':
-          this.onComplete?.(msg.totalFrames);
+          this.onComplete?.(msg.totalFrames, msg.error);
           break;
         case 'workerError':
           console.error('VDMCDecoder worker:', msg.message, msg.filename ? `@ ${msg.filename}:${msg.lineno}` : '');

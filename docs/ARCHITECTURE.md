@@ -189,7 +189,7 @@ Notes:
 
 The SDK, sample app, verification tests and this documentation are Copyright 2026 Nokia and
 licensed under the **5G-MAG Public License (v1.0)** — full text in
-[`../LICENSE`](../LICENSE), notices in [`../NOTICE`](../NOTICE).
+[`../LICENSE`](../LICENSE), notices in [`../ATTRIBUTION_NOTICE`](../ATTRIBUTION_NOTICE).
 
 The MPEG V-DMC reference software is distributed by **ISO/IEC** under the **BSD 3-Clause
 licence** (see the `COPYING` file in the reference software checkout). It is **not**

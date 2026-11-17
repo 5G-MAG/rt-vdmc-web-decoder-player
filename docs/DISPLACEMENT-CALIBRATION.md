@@ -1,7 +1,8 @@
 # 10-bit Displacement Decode & Calibration (WebCodecs)
 
 Engineering record of the investigation that made the V-DMC displacement video
-sub-stream decode **bit-exact at 10-bit** in the browser over the *standard*
+sub-stream decode **bit-exact at 10-bit** on the phones tested (section 6; desktop is within about
+one LSB of 8-bit, section 5) over the *standard*
 WebCodecs path — plus the design decisions and the dead-ends that were ruled out.
 
 > Scope: the displacement sub-stream only. Texture uses the ordinary 8-bit path.
@@ -62,7 +63,7 @@ documented limitation, not a bug to chase.
   `RGBA16F` `texImage2D`; only the texture-upload path preserves precision.
 - **Desktop is not bit-exact.** Chrome 152 / Edge 151 / Electron (all ANGLE-backed)
   flatten even the `RGBA16F` path — only ~82–88% of codes exact, ≤1–2 LSB error.
-  Desktop keeps the software-decode fallback instead.
+  On desktop the SDK uses the calibrated GPU path in `auto-besteffort` mode (section 7).
 - **`prefer-software` HEVC is unavailable on the target mobile devices** — the
   "just ask for a software decoder" standard path does not exist there.
 - **`RGB10_A2` is not usable as a general fallback.** It was bit-exact on Adreno, but on
@@ -96,7 +97,7 @@ Ramp-calibrated displacement: **100% exact (maxAbs 0)** on Pixel at both 256×12
 ## 7. Design decisions
 
 1. **Primary path = `RGBA16F` `texImage2D` GPU extract** for 10-bit recovery on mobile;
-   a legacy software `copyTo` path is kept as the desktop/fallback route.
+   on desktop the same path runs in `auto-besteffort` mode (item 2).
 2. **Runtime calibration, resolved automatically** — there is no caller-facing mode switch.
    `resolveCalibration()` in [`sdk/src/rampCalibClip.js`](../sdk/src/rampCalibClip.js) is invoked
    once, from the displacement decoder's init in
