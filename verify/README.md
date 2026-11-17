@@ -20,7 +20,9 @@ that catches driver-specific subdivision/displacement bugs (ANGLE, Adreno, Mali)
    [`../verification/gpu-capture.mjs`](../verification/gpu-capture.mjs), the same module the
    parity test and `run-verification.mjs` use.
 3. GPU output `i` must equal `decoded_0000.obj[dIdx]`. PASS requires every decoder vertex to be
-   covered and a mean error below 0.1% of the model diagonal.
+   covered and a mean error below 0.1% of the model diagonal. On desktop browsers a small residual is
+   expected (see [`../docs/DISPLACEMENT-CALIBRATION.md`](../docs/DISPLACEMENT-CALIBRATION.md), sections 5 and 7), so a
+   desktop run can report a mismatch; `?tol=0.002` sets a 0.2% pass line.
 
 Two capture paths, selected automatically:
 

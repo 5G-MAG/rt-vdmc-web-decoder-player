@@ -141,12 +141,28 @@ To use the SDK in your own app, add a `VDMCMesh` to a Three.js scene:
   import * as THREE from 'three';
   import { VDMCMesh } from '/sdk/src/VDMCMesh.js';
 
-  // THREE.Group subclass — add it to your scene and drive it like a media element
-  const vdmc = new VDMCMesh({ src: '/path/to/stream.vmesh', renderer, autoPlay: true, loop: true });
+  // The application owns the renderer, scene, camera and render loop
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2));
+  const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 1, 20000);
+  camera.position.set(1900, 1600, 6500);   // framed for the bundled football clip
+  camera.lookAt(1950, 1600, 1400);
+
+  // THREE.Group subclass: add it to your scene and drive it like a media element
+  const vdmc = new VDMCMesh({ src: '/sample-app/football_encoded.vmesh', renderer, autoPlay: true, loop: true });
+  vdmc.on('error', (e) => console.error(e));   // corrupt, truncated or empty input is reported here
   scene.add(vdmc);
 
-  // in your render loop
-  vdmc.update(performance.now());
+  // Advance playback in your animation loop
+  function animate(time) {
+    requestAnimationFrame(animate);
+    vdmc.update(time);
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animate);
 </script>
 ```
 
@@ -172,7 +188,7 @@ The player is configured in code through the `VDMCMesh` constructor; the main op
 defaults are `autoPlay = true`, `loop = true`, `fps = 30`, `subdivLevel = 3`, `dispScale = 1.0`,
 `wireframe = false` and `ringSize = 8` (see [`sdk/README.md`](sdk/README.md#vdmcmesh)).
 The hosting page must be served with `Cross-Origin-Opener-Policy: same-origin` and
-`Cross-Origin-Embedder-Policy: require-corp`, as `serve.py` does.
+`Cross-Origin-Embedder-Policy: credentialless` (or `require-corp`), as `serve.py` does.
 
 The verification tests read two environment variables: `VDMC_EDGE_EXE` (path of the
 Chromium-based browser to drive) and `VDMC_INPUT_DIR` (directory of the source mesh frames).
@@ -186,7 +202,7 @@ Three test suites validate the SDK against the native MPEG reference decoder:
 
 | Suite | What it checks | Run |
 |-------|----------------|-----|
-| [`verification/`](verification/README.md) | Native encode → decode, then the SDK's GPU output compared per vertex with the reference (intra, inter, or the bundled sphere) | `node run-verification.mjs [--sphere] [--inter --count 4]` |
+| [`verification/`](verification/README.md) | Windows only. Native encode → decode, then the SDK's GPU output compared per vertex with the reference (intra, inter, or the bundled sphere) | `node run-verification.mjs [--sphere] [--inter --count 4]` |
 | [`verification/parity/`](verification/parity/README.md) | `SubdivideMesh.js` displacement indexing and reconstruction on two bundled datasets (sphere, football) | open `verification/parity/test.html?data=sphere` |
 | [`verify/`](verify/README.md) | The SDK's shader output on desktop and mobile GPUs against the reference decoder | open `verify/test.html?dump` |
 

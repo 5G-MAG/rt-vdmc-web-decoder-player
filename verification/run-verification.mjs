@@ -461,7 +461,7 @@ function step4_compare(sdkFrames, p1) {
 // --------------------------------------------------------------------------- main
 (async () => {
   log(`V-DMC SDK verification — frames ${FRAME}..${FRAME + COUNT - 1}, ${INTER ? 'INTER' : 'INTRA'}, dispScale ${DISP_SCALE}, ${HEADED ? 'headed' : 'headless'} Edge`);
-  for (const p of [SERVE_PY, EDGE_EXE]) if (!fs.existsSync(p)) throw new Error('required tool not found: ' + p);
+  for (const p of [SERVE_PY, EDGE_EXE]) if (!fs.existsSync(p)) throw new Error('required tool not found: ' + p + (p === EDGE_EXE ? ' (set VDMC_EDGE_EXE to a Chromium-based browser; this suite is written for Windows)' : ''));
 
   // Phase 0 — create the timestamped test folder + per-phase subfolders.
   fs.mkdirSync(REF_DIR, { recursive: true });

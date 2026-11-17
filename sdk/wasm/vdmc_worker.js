@@ -141,6 +141,7 @@ self.addEventListener('unhandledrejection', (e) => {
         gofFrameBase = 0;
         framesInCurrentGof = 0;
         sawBaseMeshSinceVideoBurst = false;
+        let failure = null;
         try {
           Module.FS.writeFile('/input.vmesh', data);
           console.log('Worker: Starting callMain...');
@@ -151,11 +152,13 @@ self.addEventListener('unhandledrejection', (e) => {
         } catch (err) {
           if (err instanceof Error && err.name === 'ExitStatus') {
             console.log('Worker: Decoder finished with status', err.status);
+            if (err.status !== 0) failure = `decoder exited with status ${err.status}`;
           } else {
             console.error('Worker: Error during decoding:', err);
+            failure = String((err && err.message) || err);
           }
         }
-        postMessage({ type: 'complete', totalFrames: baseMeshCount, videoStreams: videoStreamCount });
+        postMessage({ type: 'complete', totalFrames: baseMeshCount, videoStreams: videoStreamCount, error: failure });
       }
     };
 

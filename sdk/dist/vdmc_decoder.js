@@ -56,7 +56,7 @@ var VDMCDecoder = class {
           this.onVideoStream?.(msg.streamType, msg.bitstream, msg.frameCount, msg.firstFrameId);
           break;
         case "complete":
-          this.onComplete?.(msg.totalFrames);
+          this.onComplete?.(msg.totalFrames, msg.error);
           break;
         case "workerError":
           console.error("VDMCDecoder worker:", msg.message, msg.filename ? `@ ${msg.filename}:${msg.lineno}` : "");
@@ -1519,6 +1519,8 @@ var VDMCMeshStream = class {
     this.onMode = null;
     this.onFrame = null;
     this.onComplete = null;
+    this.onError = null;
+    this.onReset = null;
     this._geometryQueue = /* @__PURE__ */ new Map();
     this._textureQueue = /* @__PURE__ */ new Map();
     this._dispQueue = /* @__PURE__ */ new Map();
@@ -1690,6 +1692,7 @@ var VDMCMeshStream = class {
     this._completeFired = false;
     this._videoStreamsExpected = 0;
     this._videoStreamsDone = 0;
+    this.onReset?.();
   }
   // --- Materials ---
   _fallbackMaterial() {
@@ -1843,9 +1846,14 @@ var VDMCMeshStream = class {
       });
       WebVideoDecoder.warmupCalibration(this.renderer).then(runDecode, runDecode);
     };
-    decoder.onComplete = (frames) => {
+    decoder.onComplete = (frames, error) => {
       this._baseComplete = true;
       this.onLog(`Base-mesh decode complete: ${frames} frames`);
+      if (error || frames === 0) {
+        const err = new Error(error || "no frames could be decoded from this bitstream");
+        this.onLog(`Decode failed: ${err.message}`);
+        this.onError?.(err);
+      }
       this._maybeComplete();
     };
   }
@@ -1910,6 +1918,23 @@ var VDMCPlayer = class {
       this._updateCounter();
       this.onComplete?.(this._frames.length);
     };
+    const prevOnReset = this.stream.onReset;
+    this.stream.onReset = () => {
+      prevOnReset?.();
+      this.reset();
+    };
+  }
+  /** Forget all frames and remove the displayed mesh (the stream has already disposed its frames). */
+  reset() {
+    if (this._activeMesh) {
+      this.container.remove(this._activeMesh);
+      this._activeMesh = null;
+    }
+    this._frames = [];
+    this._currentIndex = -1;
+    this._isPlaying = false;
+    this._decodeComplete = false;
+    this._updateCounter();
   }
   // ------------------------------------------------------------------- Playback
   /** Show the frame at the given index, swapping it into the container. */
@@ -2036,7 +2061,7 @@ var VDMCMesh = class extends THREE4.Group {
     }
   }
   // ------------------------------------------------------------------- Event Emitter
-  /** Subscribe to events ('ready', 'mode', 'firstframe', 'frame', 'ended', 'complete'). */
+  /** Subscribe to events ('ready', 'mode', 'firstframe', 'frame', 'ended', 'complete', 'error'). */
   on(event, callback) {
     if (!this._listeners.has(event)) this._listeners.set(event, /* @__PURE__ */ new Set());
     this._listeners.get(event).add(callback);
@@ -2061,6 +2086,7 @@ var VDMCMesh = class extends THREE4.Group {
   _wireEvents() {
     this.stream.onReady = () => this.emit("ready");
     this.stream.onMode = (mode) => this.emit("mode", mode);
+    this.stream.onError = (err) => this.emit("error", err);
     this.player.onFirstFrame = (frame) => this.emit("firstframe", frame);
     this.player.onShow = (index, frame) => this.emit("frame", index, frame);
     this.player.onComplete = (frameCount) => this.emit("complete", frameCount);

@@ -35,13 +35,19 @@ emitted mesh to its scene.
   import * as THREE from 'three';
   import { VDMCMesh } from '/sdk/src/VDMCMesh.js';
 
-  // High-level THREE.Group component — add directly to your scene
-  const vdmc = new VDMCMesh({
-    src: '/path/to/stream.vmesh',
-    renderer, // THREE.WebGLRenderer
-    autoPlay: true,
-    loop: true,
-  });
+  // The application owns the renderer, scene, camera and render loop
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2));
+  const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 1, 20000);
+  camera.position.set(1900, 1600, 6500);   // framed for the bundled football clip
+  camera.lookAt(1950, 1600, 1400);
+
+  // High-level THREE.Group component: add it directly to your scene
+  const vdmc = new VDMCMesh({ src: '/sample-app/football_encoded.vmesh', renderer, autoPlay: true, loop: true });
+  vdmc.on('error', (e) => console.error(e));   // corrupt, truncated or empty input is reported here
   scene.add(vdmc);
 
   // Advance playback in your animation loop
@@ -50,6 +56,7 @@ emitted mesh to its scene.
     vdmc.update(time);
     renderer.render(scene, camera);
   }
+  requestAnimationFrame(animate);
 </script>
 ```
 

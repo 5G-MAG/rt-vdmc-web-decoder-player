@@ -58,7 +58,7 @@ export class VDMCMesh extends THREE.Group {
   }
 
   // ------------------------------------------------------------------- Event Emitter
-  /** Subscribe to events ('ready', 'mode', 'firstframe', 'frame', 'ended', 'complete'). */
+  /** Subscribe to events ('ready', 'mode', 'firstframe', 'frame', 'ended', 'complete', 'error'). */
   on(event, callback) {
     if (!this._listeners.has(event)) this._listeners.set(event, new Set());
     this._listeners.get(event).add(callback);
@@ -82,6 +82,7 @@ export class VDMCMesh extends THREE.Group {
   _wireEvents() {
     this.stream.onReady = () => this.emit('ready');
     this.stream.onMode = (mode) => this.emit('mode', mode);
+    this.stream.onError = (err) => this.emit('error', err);
 
     this.player.onFirstFrame = (frame) => this.emit('firstframe', frame);
     this.player.onShow = (index, frame) => this.emit('frame', index, frame);

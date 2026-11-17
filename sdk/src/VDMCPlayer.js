@@ -71,6 +71,23 @@ export class VDMCPlayer {
       this._updateCounter();
       this.onComplete?.(this._frames.length);
     };
+
+    // A new load starts: drop the previous clip so frames do not accumulate across loads.
+    const prevOnReset = this.stream.onReset;
+    this.stream.onReset = () => {
+      prevOnReset?.();
+      this.reset();
+    };
+  }
+
+  /** Forget all frames and remove the displayed mesh (the stream has already disposed its frames). */
+  reset() {
+    if (this._activeMesh) { this.container.remove(this._activeMesh); this._activeMesh = null; }
+    this._frames = [];
+    this._currentIndex = -1;
+    this._isPlaying = false;
+    this._decodeComplete = false;
+    this._updateCounter();
   }
 
   // ------------------------------------------------------------------- Playback
